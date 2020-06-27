@@ -1,0 +1,62 @@
+azs:
+- name: z1
+  cloud_properties:
+    default_disk_type: thin
+    datacenters:
+    - name: ((vcenter_dc))
+      clusters:
+      - ((vcenter_cluster)): {resource_pool: ((vcenter_rp))}
+      datastore_pattern: ((vcenter_ds))
+
+networks:
+- name: default
+  subnets:
+  - azs: [z1]
+    cloud_properties:
+      name: ((network_name))
+    dns: ((vcenter_dns))
+    range: ((internal_cidr))
+    gateway: ((internal_gw))
+    static:
+    - ((concourse_external_worker_ip))
+    - ((minio_ip))
+    reserved: ((reserved_ip_ranges))
+  type: manual
+
+vm_types:
+- name: concourse-external-worker
+  cloud_properties:
+    cpu: 1
+    disk: 200000
+    ram: 8096
+    datastores: ((vcenter_datastore_names))
+- name: default
+  cloud_properties:
+    cpu: 1
+    disk: 20480
+    ram: 8096
+    datastores: ((vcenter_datastore_names))
+- name: compilation
+  cloud_properties:
+    cpu: 8
+    disk: 20480
+    ram: 16192
+    datastores: ((vcenter_datastore_names))
+
+disk_types:
+- name: 50gb
+  disk_size: 50_000
+  cloud_properties:
+    datastores:  ((vcenter_datastore_names))
+- name: 300gb
+  disk_size: 300_000
+  cloud_properties:
+    datastores:  ((vcenter_datastore_names))
+
+compilation:
+  az: z1
+  network: default
+  reuse_compilation_vms: true
+  vm_type: compilation
+  workers: 4
+

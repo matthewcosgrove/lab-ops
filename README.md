@@ -48,6 +48,8 @@ This project is is essentially a wrapper around [BUCC](https://github.com/starka
 
 So the first step is to create a repo outside of this one to manage your state and the specifics of the BUCC instance you are going to manage.
 
+IMPORTANT: Immediately create a `.gitignore` file at the root of your new state repo with the entry `director-vars-*.yml`. Without this you may accidently commit sensitive data to git.
+
 Next we need a way to tell our scripts and bucc where your state repo is..
 
 In your `~/.profile` put the line
@@ -75,9 +77,9 @@ bin/generate_infra_settings.sh
 
 2) Check the vcenter creds are available to govc. Follow instructions of output to set GOVC env vars manually if required which will be the case until the deploy script has been run further below.
 
-WITH GIST: `init-govc`
+WITH GIST: `init_govc`
 
-WITHOUT GIST: cd to the root of this repo and `source ./bin/init-govc.sh`
+WITHOUT GIST: cd to the root of this repo and `source ./bin/init_govc.sh`
 
 ## Rollout BUCC
 
@@ -85,15 +87,14 @@ To deploy
 
 WITH GIST:
 ```
-init-govc
-bin/deploy.sh
+init_govc
+bin/deploy_bucc.sh
 ```
 
 WITHOUT GIST:
 ```
-source bin/init-govc.sh
-# Follow instructions of output to set GOVC env vars manually if required (i.e. the first time you run it if you have not yet deployed)
-bin/deploy.sh
+source bin/init_govc.sh
+bin/deploy_bucc.sh
 ```
 
 ## Day2Ops BUCC
@@ -128,13 +129,23 @@ credhub find
 
 3) Look after your BUCC
 
-All the bucc commands that rely on state should be run through the bucc wrapper. The `bin/deploy.sh` also calls bucc via the `bin/bucc_wrapper.sh` script
+All the bucc commands that rely on state should be run through the bucc wrapper script. Other bucc commands can be run directly or via the wrapper script.
+
+However, by convention, it is preferred to do everything through `bin\bucc_wrapper.sh`. For example, the [bin/deploy_bucc.sh](bin/deploy_bucc.sh) also calls bucc via the [bin/bucc_wrapper.sh](bin/bucc_wrapper.sh) script. In fact, what actually happens is we have a function for this which abstracts it all behind `bucc_cmd` so that, just like the scripts, you can take advantage of the same mechanism as follows
+
+```
+source bin/bucc_wrapper_helper.sh
+bucc_cmd info
+```
+
+or for a bigger task like tearing everything down, which relies on access to the state...
 
 ```
 # WARNING: This is the danger zone and this command will destroy your environment and bosh state
-# Instead of running "bucc down" you should run it through the bucc_wrapper.sh script
-bin/bucc_wrapper.sh down
+source bin/bucc_wrapper_helper.sh
+bucc_cmd down
 ```
+So instead of running "bucc down", by running the commands above you are doing it through the bucc_wrapper.sh script
 
 ## Advanced Configuration - Extending the solution
 

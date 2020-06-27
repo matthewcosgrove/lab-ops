@@ -1,13 +1,21 @@
 #!/bin/bash
 
-REPO_ROOT_DIR="$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )")"
-export BBL_STATE_DIR="${REPO_ROOT_DIR}/../lab-ops-state/state"
+: "${BUCC_WRAPPER_ROOT_DIR:? BUCC_WRAPPER_ROOT_DIR must be set to the root dir of this repo }"
+: "${BBL_STATE_DIR:? BBL_STATE_DIR must be set for BUCC to use. See README for details }"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
+
+# Pre-check like BUCC but we get in there first to avoid it setting itself on the path in https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L357
+if [[ ! -f "${STATE_VARS_STORE}" ]]; then # Similar to https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L358
+  exit 0
+fi
 
 cat <<EOF
-export BBL_STATE_DIR="${REPO_ROOT_DIR}/../lab-ops-state/state"
-$(${REPO_ROOT_DIR}/src/bucc/bin/bucc env)
+export BBL_STATE_DIR="${BBL_STATE_DIR}"
+$(bucc_cmd env)
 EOF
-export INFRA_SETTINGS_FILE=$REPO_ROOT_DIR/../lab-ops-state/infra-settings.yml
-bosh_director_name=$(spruce json "$INFRA_SETTINGS_FILE" | jq -re '.director_name')
-export FLY_TARGET=$bosh_director_name
+bosh_director_name=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -re '.director_name')
+export FLY_TARGET=$bosh_director_name # bucc gives us this for free, just setting it to make it available for other uses
 
+# Everytime we source BUCC via bucc env it prefixes its binary path to the PATH. We need to make sure ours is first
+export PATH="${BUCC_WRAPPER_ROOT_DIR}"/bin:"${PATH}"

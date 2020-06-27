@@ -1,0 +1,42 @@
+---
+name: concourse-external-worker
+
+instance_groups:
+- name: concourse-external-worker
+  instances: 1
+  azs: [z1]
+  jobs:
+  - name: worker
+    release: concourse
+    properties:
+      log_level: debug
+      worker_gateway:
+        hosts: ["((internal_ip)):2222"]
+        host_public_key: ((/concourse/main/concourse_tsa_host_key.public_key))
+        worker_key: ((/concourse/main/concourse_worker_key))
+  persistent_disk_type: 50gb
+  stemcell: default
+  vm_resources:
+    cpu: 1
+    ram: 16384
+    ephemeral_disk_size: 300000
+  networks:
+  - name: default
+    default: [dns, gateway]
+    static_ips: [((concourse_external_worker_ip))]
+
+stemcells:
+- alias: default
+  os: ubuntu-xenial
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 1000-60000
+  update_watch_time: 1000-60000
+
+releases:
+- name: concourse
+

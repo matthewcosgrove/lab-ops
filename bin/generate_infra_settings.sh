@@ -8,10 +8,10 @@ REPO_ROOT_DIR="$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null &&
 STATE_ROOT_DIR="$BBL_STATE_DIR/.."
 
 INFRA_SETTINGS="$STATE_ROOT_DIR/infra-settings.yml"
-spruce merge "$REPO_ROOT_DIR/infra-settings-template.yml" > $INFRA_SETTINGS
+spruce merge "$REPO_ROOT_DIR/infra-settings-template.yml" > "$INFRA_SETTINGS"
 cat "$INFRA_SETTINGS"
 
-echo [SUCCESS] The file $INFRA_SETTINGS has been generated and will now become the source of truth for the IaC deployment. Please commit the changes to version control
+echo "[SUCCESS] The file $INFRA_SETTINGS has been generated and will now become the source of truth for the IaC deployment. Please commit the changes to version control"
 pushd "$STATE_ROOT_DIR"
 git status
 popd
