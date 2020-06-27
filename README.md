@@ -1,8 +1,10 @@
+## Overview
+
 An opinionated way to roll out [BUCC](https://github.com/starkandwayne/bucc) on vsphere and beef up how it runs.
 
 We use BUCC to get a seamlessly integrated BOSH, UAA, Concourse and CredHub
 
-By default, BUCC runs with all jobs (i.e. processes) co-located on one VM created by the command [create-env](https://bosh.io/docs/init-vsphere/). This project extends BUCC and puts the default Concourse worker VM on its own VM as this is what we are going to put to work the most and we want the ability to scale out, recreate the VM to fix problems etc via the bosh CLI. A similar approach can be applied to the other bosh jobs by following the same pattern if required.
+By default, BUCC runs with all jobs (i.e. processes) co-located on one VM created by the command [create-env](https://bosh.io/docs/init-vsphere/). This project extends BUCC and puts the default Concourse worker VM on its own VM as this is what we are going to put to work the most and we want the ability to scale out, recreate the VM to fix problems etc via the bosh CLI. A similar approach can be applied to the other bosh jobs by following the same pattern if required. e.g. if you are worried about downtime on Concourse Web during BUCC upgrades.
 
 The project also supports the following integrated components managed by the BUCC bosh director.
 * minio (integrated to provide creds to Concourse pipelines so they can access an S3 bucket out of the box)
@@ -10,23 +12,31 @@ The project also supports the following integrated components managed by the BUC
 
 Some opinions that affect if this project will work out of the box for you include (some of these can be modified fairly easily but there is no documentation around this)
 * You use resource pools
-* You will only run one BUCC on this VM
+* You will only run one BUCC on your Tools VM (i.e. where you will clone this repo too and run all the commands)
 * The bosh cli alias and the fly cli alias are both `bucc`
-* You treat the environment as ephemeral. The state repo for BOSH described below is your responsibility to manage and a deep understanding of BOSH is recommended for Day 2 Ops maintenance, which is possible but requires expertise. Failing that, to avoid digging into the weeds when a need for troubleshooting arises, one option is to just blow away the state directory and start again. You may still have some clean up to do manually though... which is where your vcenter skills become important. Just make sure you have scripted up any population of CredHub and have everything else in git. You can kiss goodbye to such things as your Concourse history though unless you fancy running Postgres back ups.
+* You treat the environment as ephemeral. The state repo for BOSH described below is your responsibility to manage and a deep understanding of BOSH is recommended for Day 2 Ops maintenance, which is possible but requires expertise. Failing that, to avoid digging into the weeds when a need for troubleshooting arises, one option is to just blow away the state directory and start again. You may still have some clean up to do manually though... which is where your vcenter skills become important. Just make sure you have scripted up any population of CredHub and have everything else in git. You can kiss goodbye to such things as your Concourse history though unless you fancy running Postgres back ups ([bucc does support BBR for back ups btw](https://github.com/starkandwayne/bucc#backup--restore)).
 
 ## Prereqs
 
 Tested on Ubuntu 16.04 installed via OpsMan OVA 2.9. See an opinionated set up here: https://gist.github.com/matthewcosgrove/9e77386991d77873ca6700acda9225bc
 
 IT IS RECOMMENDED TO RUN THROUGH THE SET UP OF THE GIST ON UBUNTU 16.04 DEPLOYED VIA OPSMAN OVA
+
 MOST INSTRUCTIONS AND SCRIPTS ASSUME THAT THIS IS THE SET UP YOU HAVE SO YOU MIGHT HAVE TO TWEAK THEM IF YOU ARE DOING SOMETHING DIFFERENT
 
 Instructions below will reference the gist above. Where relevant each instruction will say something like
 
 WITH GIST: Do this semi-automated step
+
 WITHOUT GIST: Do this manual step or steps
 
-The set up above does not currently install the CLIs we need. Instead that script is here in the repo, so assuming Ubuntu run the following from the root of this repo
+The gist set up above does not currently install the CLIs we need. 
+
+* govc
+* spruce
+* jq
+
+Instead that script is in this repo, so assuming Ubuntu run the following from the root of this repo
 
 ```
 ./bin/00_install_bits_ubuntu.sh
@@ -54,15 +64,20 @@ At the root of that repo there needs to be a file called `infra-settings.yml` wh
 ## Preparation Steps
 
 1) We generate the `infra-settings.yml` via env vars.
+  
   a) Copy and populate your `~/.profile` as seen in [reference-env-vars.txt](reference-env-vars.txt)
+  
   b) From the root of this repo run the following script
+
 ```
 bin/generate_infra_settings.sh
 ```
 
 2) Check the vcenter creds are available to govc. Follow instructions of output to set GOVC env vars manually if required which will be the case until the deploy script has been run further below.
+
 WITH GIST: `init-govc`
-WITHOUT GIST: cd here and `source ./bin/init-govc.sh`
+
+WITHOUT GIST: cd to the root of this repo and `source ./bin/init-govc.sh`
 
 ## Rollout BUCC
 
@@ -86,6 +101,7 @@ bin/deploy.sh
 To interact with BUCC going forwards and have all the CLIs configured to work out the box
 
 1) PREP ENV VARS
+
 WITH GIST:
 ```
 # Nothing to do here as env vars are sourced on login
@@ -108,6 +124,16 @@ bosh vms
 bucc credhub
 credhub find
 # etc (see BUCC docs for more out of the box capabilities)
+```
+
+3) Look after your BUCC
+
+All the bucc commands that rely on state should be run through the bucc wrapper. The `bin/deploy.sh` also calls bucc via the `bin/bucc_wrapper.sh` script
+
+```
+# WARNING: This is the danger zone and this command will destroy your environment and bosh state
+# Instead of running "bucc down" you should run it through the bucc_wrapper.sh script
+bin/bucc_wrapper.sh down
 ```
 
 ## Advanced Configuration - Extending the solution
