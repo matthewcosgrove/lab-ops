@@ -1,0 +1,38 @@
+director_name: bucc
+alias: bucc
+internal_cidr: (( grab $BUCC_VM_CIDR ))
+internal_gw: (( grab $BUCC_VM_GATEWAY ))
+internal_ip: (( grab $BUCC_VM_IP ))
+network_name: (( grab $GOVC_NETWORK ))
+vcenter_cluster: (( grab $GOVC_CLUSTER ))
+vcenter_dc: (( grab $GOVC_DATACENTER ))
+vcenter_disks: (( grab vcenter_vms ))
+vcenter_ds: (( grab $VCENTER_DATASTORE_PATTERN ))
+vcenter_ip: (( grab $GOVC_URL ))
+vcenter_templates: (( grab vcenter_vms ))
+vcenter_vms: (( grab $VCENTER_FOLDER_NAME ))
+vcenter_vm_cpu: 4
+vcenter_vm_disk: 200000
+vcenter_vm_ram: 16640
+
+# flag: --dns
+vcenter_dns: (( grab $VCENTER_DNS ))
+
+# flag: --resource-pool
+vcenter_rp: (( grab $VCENTER_RESOURCE_POOL_NAME ))
+
+# minio deployment
+minio_server_region: bucc-minio
+
+# bosh cloud-config
+minio_ip: (( grab $BUCC_BOSH_STATIC_IP_MINIO ))
+vcenter_datastore_names: (( grab $BUCC_BOSH_VCENTER_DATASTORE_NAMES_YAML_ARRAY ))
+reserved_ip_ranges: (( grab $BUCC_BOSH_RESERVED_IP_RANGES_YAML_ARRAY ))
+concourse_external_worker_ip: (( grab $BUCC_BOSH_STATIC_IP_CONCOURSE_WORKER ))
+
+# OPTIONAL: Manually populate in the following format if required
+# WARNING: This will be overrwritten if you re-generate these infra-settings from this template, so think carefully about where you place it!
+# vcenter_ca_cert: |
+#  -----BEGIN CERTIFICATE-----
+#  -----END CERTIFICATE-----
+
