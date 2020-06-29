@@ -64,7 +64,9 @@ obviously changing `state_repo_name` to point to the repo you just created
 
 You can create the state directory inside the new repo as well or just leave it to the scripts.
 
-At the root of that repo there needs to be a file called `infra-settings.yml` which we will generate in the next section
+EXTREMELY IMPORTANT: The state dir is ephemeral and is wiped out on teardown. Do NOT put your own operator files in there unless they are copies!!
+
+At the root of that repo there needs to be a file called `infra-settings.yml` which we will generate in the next section. Anything you want to keep can be in the root of the repo just like the `infra-settings.yml` which will not be wiped out in between deployments
 
 ## Preparation Steps
 
