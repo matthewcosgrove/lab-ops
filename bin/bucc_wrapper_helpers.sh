@@ -39,7 +39,7 @@ function upload_stemcell() {
   stemcell_url=$(bucc int --path /resource_pools/name=vms/stemcell/url)
   echo "Uploading stemcell $stemcell_url"
   stemcell_sha1=$(bucc int --path /resource_pools/name=vms/stemcell/sha1)
-  bosh_cmd upload-stemcell --sha1=$stemcell_sha1 $stemcell_url
+  bosh_cmd upload-stemcell --sha1="${stemcell_sha1}" "${stemcell_url}"
 }
 
 #######################################
@@ -172,7 +172,7 @@ function bosh_delete_all_deployments(){
   fi
 
   for deployment_name in $(bosh -e "$BOSH_ENV_ALIAS" -n deployments --json | jq -r '.Tables[0].Rows[].name'); do
-    bosh_cmd delete-deployment -d $deployment_name
+    bosh_cmd delete-deployment -d "${deployment_name}"
     sleep 1m
   done
 }

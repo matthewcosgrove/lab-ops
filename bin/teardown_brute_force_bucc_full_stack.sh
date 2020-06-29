@@ -11,11 +11,11 @@ source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 function destroy() {
   CLEANUP_VM_WITH_IP=$1
   echo "Destroy VM: $CLEANUP_VM_WITH_IP"
-  govc vm.info -vm.ip ${CLEANUP_VM_WITH_IP}
+  govc vm.info -vm.ip "${CLEANUP_VM_WITH_IP}"
   rc=$?; if [[ $rc != 0 ]]; then return $rc; fi
   # https://github.com/starkandwayne/bucc/blob/86c85b138d4ef4d243e4e79d8640f7e2a8f98514/ci/tasks/cleanup-vshpere-ci-vm/task
-  templates=$(govc vm.info -vm.ip ${CLEANUP_VM_WITH_IP} -json | grep -o 'sc-[-[:alnum:]]*' | sort -u | head -1)
-  govc vm.destroy -vm.ip ${CLEANUP_VM_WITH_IP} | true
+  templates=$(govc vm.info -vm.ip "${CLEANUP_VM_WITH_IP}" -json | grep -o 'sc-[-[:alnum:]]*' | sort -u | head -1)
+  govc vm.destroy -vm.ip "${CLEANUP_VM_WITH_IP}" | true
 
   echo "VM with IP ${CLEANUP_VM_WITH_IP} destroyed, removing associated stemcells"
   for del in $templates; do
@@ -35,7 +35,7 @@ function destroy_by_vm_name() {
   govc vm.destroy "${CLEANUP_VM_WITH_NAME}" | true
 
   echo "Removing associated stemcells"
-  for del in "$templates"; do
+  for del in $templates; do
     remove=$(echo "${del}" | xargs ) # remove leading spaces
     echo "deleting ${del}"
     govc vm.destroy "${VCENTER_STEMCELL_FOLDER_PATH}"/"${remove}"
@@ -43,7 +43,6 @@ function destroy_by_vm_name() {
 }
 
 GOVC_DATACENTER=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -r '.vcenter_dc')
-GOVC_INSECURE=true
 echo "Brute force teardown for target ${GOVC_DATACENTER} in ${GOVC_URL} with user ${GOVC_USERNAME}"
 
 concourse_external_worker_ip=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -r '.concourse_external_worker_ip')

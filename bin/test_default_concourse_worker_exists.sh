@@ -7,7 +7,7 @@ source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 
 bucc_cmd fly
 
-bosh_env_alias=$(bosh int $BUCC_INFRA_SETTINGS_FILE --path /alias)
+bosh_env_alias=$(bosh int "${BUCC_INFRA_SETTINGS_FILE}" --path /alias)
 
 echo "[TEST] Default worker should be available"
 fly -t "${bosh_env_alias}" workers # Human readable for output
