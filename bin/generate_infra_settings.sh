@@ -5,6 +5,7 @@ set -euo pipefail
 REPO_ROOT_DIR="$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )")"
 : "${BBL_STATE_DIR:? BBL_STATE_DIR must be set for BUCC to use. See README for details }"
 
+mkdir -p ${BBL_STATE_DIR}
 STATE_ROOT_DIR="$BBL_STATE_DIR/.."
 
 INFRA_SETTINGS="$STATE_ROOT_DIR/infra-settings.yml"
