@@ -18,17 +18,25 @@ Some opinions that affect if this project will work out of the box for you inclu
 
 ## Prereqs
 
+Clone this repo, with the submodules
+
+```
+git clone --recurse-submodules git@github.com:matthewcosgrove/lab-ops.git
+# or with https
+git clone --recurse-submodules https://github.com/matthewcosgrove/lab-ops.git
+```
+
 Tested on Ubuntu 16.04 installed via OpsMan OVA 2.9. See an opinionated set up here: https://gist.github.com/matthewcosgrove/9e77386991d77873ca6700acda9225bc
 
-IT IS RECOMMENDED TO RUN THROUGH THE SET UP OF THE GIST ON UBUNTU 16.04 DEPLOYED VIA OPSMAN OVA
-
-MOST INSTRUCTIONS AND SCRIPTS ASSUME THAT THIS IS THE SET UP YOU HAVE SO YOU MIGHT HAVE TO TWEAK THEM IF YOU ARE DOING SOMETHING DIFFERENT
+IT IS RECOMMENDED TO RUN THROUGH THE SET UP OF THE GIST ON UBUNTU 16.04 DEPLOYED VIA OPSMAN OVA. MOST INSTRUCTIONS AND SCRIPTS ASSUME THAT THIS IS THE SET UP YOU HAVE SO YOU MIGHT HAVE TO TWEAK THEM IF YOU ARE DOING SOMETHING DIFFERENT
 
 Instructions below will reference the gist above. Where relevant each instruction will say something like
 
+```
 WITH GIST: Do this semi-automated step
 
 WITHOUT GIST: Do this manual step or steps
+```
 
 The gist set up above does not currently install the CLIs we need. 
 

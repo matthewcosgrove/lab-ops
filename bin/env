@@ -10,12 +10,11 @@ if [[ ! -f "${STATE_VARS_STORE}" ]]; then # Similar to https://github.com/starka
   exit 0
 fi
 
+bosh_director_name=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -re '.director_name')
 cat <<EOF
 export BBL_STATE_DIR="${BBL_STATE_DIR}"
 $(bucc_cmd env)
-EOF
-bosh_director_name=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -re '.director_name')
 export FLY_TARGET=$bosh_director_name # bucc gives us this for free, just setting it to make it available for other uses
-
 # Everytime we source BUCC via bucc env it prefixes its binary path to the PATH. We need to make sure ours is first
-export PATH="${BUCC_WRAPPER_ROOT_DIR}"/bin:"${PATH}"
+export PATH="${BUCC_WRAPPER_ROOT_DIR}"/bin:"${BUCC_SUBMODULE_LOCATION}"/bin:"${PATH}"
+EOF
