@@ -12,7 +12,7 @@ The project also supports the following integrated components managed by the BUC
 
 Some opinions that affect if this project will work out of the box for you include (some of these can be modified fairly easily but there is no documentation around this)
 * You use resource pools
-* You will only run one BUCC on your Tools VM (i.e. where you will clone this repo too and run all the commands)
+* You will only run one BUCC on your Tools VM (i.e. where you will clone this repo to and run all the commands)
 * The bosh cli alias and the fly cli alias are both `bucc`
 * You treat the environment as ephemeral. The state repo for BOSH described below is your responsibility to manage and a deep understanding of BOSH is recommended for Day 2 Ops maintenance, which is possible but requires expertise. Failing that, to avoid digging into the weeds when a need for troubleshooting arises, one option is to just blow away the state directory and start again. You may still have some clean up to do manually though... which is where your vcenter skills become important. Just make sure you have scripted up any population of CredHub and have everything else in git. You can kiss goodbye to such things as your Concourse history though unless you fancy running Postgres back ups ([bucc does support BBR for back ups btw](https://github.com/starkandwayne/bucc#backup--restore)).
 
