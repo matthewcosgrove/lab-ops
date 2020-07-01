@@ -50,6 +50,11 @@ Instead that script is in this repo, so assuming Ubuntu run the following from t
 ./bin/00_install_bits_ubuntu.sh
 ```
 
+Prereqs that we don't do check through the scripts but could do
+
+* Run pre-checks on the `GOVC_*` creds and config using govc commands. You need to use a vcenter admin account or check your user has the permissions outlined in the docs [here](https://github.com/cloudfoundry/bosh-vsphere-cpi-release/blob/master/docs/required_vcenter_privileges.md).
+* Ensure the supported DRS mode is set on the cluster via govc. Instead you should go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS check the config is set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail.
+
 ## Your Settings and State
 
 This project is is essentially a wrapper around [BUCC](https://github.com/starkandwayne/bucc). Just running bucc by itself creates a state dir within the bucc repo. We override the state location with the env var `BBL_STATE_DIR` which is what bucc uses. See [here](https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8)
