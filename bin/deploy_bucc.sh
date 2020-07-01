@@ -12,6 +12,7 @@ trap 'rm -rf ${TMPDIR}' INT TERM QUIT EXIT
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
+bucc_env_file_to_source="${SCRIPT_DIR}"/bucc_env
 
 # Idempotent approach which is meant to affect first run through to prevent BUCC generating the vars file https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L69
 mkdir -p "$STATE_VARS_DIR"
@@ -41,9 +42,10 @@ spruce merge "${STATE_ROOT_DIR}"/infra-settings.yml \
 bucc_cmd up --cpi vsphere --debug
 echo "Deploy completed successfully"
 echo "Running test suite against the BUCC installation..."
-source <("${SCRIPT_DIR}"/env)
+source <("${bucc_env_file_to_source}")
 bucc_cmd test
 "${SCRIPT_DIR}"/test_default_concourse_worker_exists.sh
+store_bucc_interpolation_result
 
 echo "[SUCCESS] Phase 1 complete. BUCC installed in its default configuration"
 echo "Phase 2: Swapping out internal Concourse worker for a bosh-managed Concourse worker VM"
@@ -56,9 +58,10 @@ cp_ops_file_to_state_dir "${source_ops_file_name}"
 bucc_cmd up --cpi vsphere --debug # TODO: Optimise. This is idempotent but not efficient.
 echo "Deploy completed successfully"
 echo "Running test suite against the BUCC installation..."
-source <("${SCRIPT_DIR}"/env)
+source <("${bucc_env_file_to_source}")
 bucc_cmd test
 "${SCRIPT_DIR}"/test_default_concourse_worker_exists.sh
+store_bucc_interpolation_result
 
 echo "[SUCCESS] Phase 2 complete. BUCC configured with external worker VM"
 

@@ -2,15 +2,20 @@
 
 repo_root_dir="$(dirname "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )")"
 export REPO_ROOT_DIR="${repo_root_dir}"
-export BOSH_MANIFEST_DIR="${REPO_ROOT_DIR}"/infra
-export BOSH_OPS_FILES_DIR="${BOSH_MANIFEST_DIR}"/ops
+
+# BUCC conventions
 export STATE_ROOT_DIR="${BBL_STATE_DIR}"/.. # Slight variance in naming style from https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L10
 export STATE_VARS_DIR="${BBL_STATE_DIR}"/vars
 export STATE_VARS_STORE="${STATE_VARS_DIR}"/director-vars-store.yml
 export STATE_VARS_FILE="${STATE_VARS_DIR}"/director-vars-file.yml
 export BOSH_STATE_JSON="${STATE_VARS_DIR}"/bosh-state.json
 export STATE_OPS_FILES_DIR="${BBL_STATE_DIR}"/operators # as expected by BUCC https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L147
+
+# BUCC wrapper aka lab-ops conventions
+export BOSH_MANIFEST_DIR="${REPO_ROOT_DIR}"/infra
+export BOSH_OPS_FILES_DIR="${BOSH_MANIFEST_DIR}"/ops
 export STATE_OPS_FILE_PREFIX="z-bucc-wrapper-"
+export STATE_BUCC_CURRENT_YAML="${STATE_VARS_DIR}"/director-vars-bucc-current.yml # Follow convention to prevent commit (i.e.) .gitignore should contain entry director-vars-*
 export BUCC_SUBMODULE_LOCATION="${REPO_ROOT_DIR}"/src/bucc
 export BUCC_INFRA_SETTINGS_FILE="${STATE_ROOT_DIR}"/infra-settings.yml
 bosh_env_alias=$(bosh int "${BUCC_INFRA_SETTINGS_FILE}" --path /alias)
@@ -175,4 +180,10 @@ function bosh_delete_all_deployments(){
     bosh_cmd delete-deployment -d "${deployment_name}"
     sleep 1m
   done
+}
+
+function store_bucc_interpolation_result(){
+
+  echo "Persisting the actual bosh.yml interpolation as ${STATE_BUCC_CURRENT_YAML}"
+  bucc_cmd int | sed '/BEGIN RSA PRIVATE KEY/,/END RSA PRIVATE KEY/{//!d;};' | sed '/BEGIN CERTIFICATE/,/END CERTIFICATE/{//!d;};' > "${STATE_BUCC_CURRENT_YAML}"
 }
