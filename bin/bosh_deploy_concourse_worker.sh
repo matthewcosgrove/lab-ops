@@ -16,7 +16,7 @@ source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 echo "Starting bosh deploy process.."
 export BOSH_INTERPOLATE_VALIDATION_CREDHUB_VAR_EXCLUSIONS="/concourse/main/concourse_worker_key /concourse/main/concourse_tsa_host_key.public_key"
 declare -a flags
-flags=(-o "${BUCC_SUBMODULE_LOCATION}"/ops/3-concourse-release.yml) # Re-using BUCC ops files
+flags=(-o "${BUCC_SUBMODULE_LOCATION}"/ops/9-concourse-compiled-release.yml) # Re-using BUCC ops files
 flags+=(--vars-file $BUCC_INFRA_SETTINGS_FILE)
 
 manifest="${BOSH_MANIFEST_DIR}"/concourse-external-worker-vm-deployment.yml
