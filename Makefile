@@ -11,3 +11,5 @@ check-scripts-all: ## Run shellcheck static analysis on all .sh files within git
 	git ls-files --exclude='*.sh' --ignored | xargs shellcheck ## See https://github.com/koalaman/shellcheck/wiki/GitLab-CI
 	echo "[SUCCESS] check passed"
 
+credhub-populate: ## Helper script to populate credhub
+	bin/credhub_populate_vcenter.sh
