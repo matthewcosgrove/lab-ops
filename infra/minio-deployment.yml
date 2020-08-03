@@ -1,0 +1,53 @@
+---
+name: minio
+
+instance_groups:
+  - name: minio-server
+    azs: [z1]
+    instances: 1
+    jobs:
+    - name: minio-server
+      release: minio
+      templates:
+      - name: minio-server
+      provides:
+        minio-server: {as: minio-link}
+      properties:
+        credential:
+          accesskey: ((access_key))
+          secretkey: ((secret_key))
+        region: ((minio_server_region))
+        port: 9001
+    persistent_disk_type: 300gb
+    stemcell: default
+    vm_type: default
+    networks:
+    - name: default
+      default: [dns, gateway]
+      static_ips: [((minio_ip))]
+
+stemcells:
+- alias: default
+  os: ubuntu-xenial
+  version: latest
+
+update:
+  canaries: 1
+  canary_watch_time: 30000
+  update_watch_time: 30000
+  max_in_flight: 4
+  serial: false
+
+releases:
+- name: "minio"
+  version: "2020-07-31T03-39-05Z"
+  url: "https://bosh.io/d/github.com/minio/minio-boshrelease?v=2020-07-31T03-39-05Z"
+  sha1: "f0f352f04b8d8bef3c390a720c3d1e733ed36668"
+
+variables:
+- name: access_key
+  type: password
+  options:
+    length: 20
+- name: secret_key
+  type: password
