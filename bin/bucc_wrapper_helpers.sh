@@ -40,6 +40,33 @@ function bosh_cmd() {
   set +x
 }
 
+function credhub_login() {
+  echo "Using credhub CLI managed by BUCC.."
+  if ! bucc_cmd credhub > /dev/null; then
+    err_fatal "Cannot login into credhub via BUCC"
+  fi
+  credhub --version
+  echo "Testing connection via get.."
+  credhub get -n /concourse/main/bosh_name
+}
+
+function credhub_cmd() {
+  credhub_login
+  set -x
+  credhub "$@"
+  set +x
+}
+
+function mc_cmd() {
+  MINIO_ACCESS_KEY=$(credhub get -n /concourse/main/minio_access_key -q)
+  MINIO_SECRET_KEY=$(credhub get -n /concourse/main/minio_secret_key -q)
+  MINIO_HOST=$(credhub get -n /concourse/main/minio_ip -q)
+  export MC_HOST_bucc=http://${MINIO_ACCESS_KEY}:${MINIO_SECRET_KEY}@${MINIO_HOST}:9001
+  set -x
+  mc "$@"
+  set +x
+}
+
 function upload_stemcell() {
   stemcell_url=$(bucc int --path /resource_pools/name=vms/stemcell/url)
   echo "Uploading stemcell $stemcell_url"
