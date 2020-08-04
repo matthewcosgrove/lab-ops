@@ -58,6 +58,7 @@ function credhub_cmd() {
 }
 
 function mc_cmd() {
+  credhub_login
   MINIO_ACCESS_KEY=$(credhub get -n /concourse/main/minio_access_key -q)
   MINIO_SECRET_KEY=$(credhub get -n /concourse/main/minio_secret_key -q)
   MINIO_HOST=$(credhub get -n /concourse/main/minio_ip -q)
