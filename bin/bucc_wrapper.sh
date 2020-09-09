@@ -49,10 +49,6 @@ case "$1" in
 	info "$@"
         ;;
 
-    test)
-        smoke_tests
-        ;;
-
     *)
         $bucc_cmd "$@"
         ;;

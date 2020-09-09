@@ -47,7 +47,7 @@ function credhub_login() {
   fi
   credhub --version
   echo "Testing connection via get.."
-  credhub get -n /concourse/main/bosh_name
+  credhub get -n /concourse/main/bosh_name > /dev/null
 }
 
 function credhub_cmd() {
