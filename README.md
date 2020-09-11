@@ -68,8 +68,8 @@ Next we need a way to tell our scripts and bucc where your state repo is..
 In your `~/.profile` put the lines
 ```
 export BUCC_WRAPPER_ROOT_DIR="CHANGE-ME" # e.g. "/home/ubuntu/lab-ops"
-state_repo_name="CHANGE-ME" # e.g. "/home/ubuntu/lab-ops-state"
-export BBL_STATE_DIR="~/${state_repo_name}/state" # BBL_STATE_DIR is the convention use by BUCC https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8 
+state_repo_root_dir="CHANGE-ME" # e.g. "/home/ubuntu/lab-ops-state"
+export BBL_STATE_DIR="${state_repo_root_dir}/state" # BBL_STATE_DIR is the convention use by BUCC https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8 
 
 # IMPORTANT: Sourcing of .functions MUST come after the lines above. See gist for examples 
 ```
