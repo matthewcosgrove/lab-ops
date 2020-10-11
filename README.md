@@ -49,7 +49,10 @@ IMPORTANT: Check the Tools VM automation created a `.gitignore` file at the root
 
 IMPORTANT: The `/home/ubuntu/lab-ops-state/state` dir is ephemeral and is wiped out on teardown. Do NOT put your own bosh operator files in there unless they are copies!!
 
-At the root of that repo there needs to be a file called `infra-settings.yml` which we will generate in the next section. Anything you want to keep can be in the root of the repo just like the `infra-settings.yml` which will not be wiped out in between deployments
+At the root of that repo there needs to be a file called `infra-settings.yml` which we will generate in the next section. Anything you want to keep can be in the root of the repo just like the `infra-settings.yml` which will not be wiped out in between deployments. i.e.
+
+`/home/ubuntu/lab-ops-state` ---> safe
+`/home/ubuntu/lab-ops-state/state` ---> NOT safe
 
 ## Preparation Steps
 
