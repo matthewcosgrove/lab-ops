@@ -73,7 +73,7 @@ bin/generate_infra_settings.sh
 To deploy
 
 ```
-init_govc
+init-govc
 bin/deploy_bucc.sh
 ```
 
