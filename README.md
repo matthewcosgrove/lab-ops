@@ -34,15 +34,7 @@ After that you are on your own as the rest of this README assumes you are using 
 
 ## Your Settings and State
 
-This project is is essentially a wrapper around [BUCC](https://github.com/starkandwayne/bucc). Just running bucc by itself creates a state dir within the bucc repo. We override the state location with the env var `BBL_STATE_DIR` which is what bucc uses. See [here](https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8)
-
-So the first step is to create a repo outside of this one to manage your state and the specific configuration of the BUCC instance you are going to manage.
-
-```
-mkdir -p /home/ubuntu/lab-ops-state
-```
-
-IMPORTANT: Immediately create a `.gitignore` file at the root of your new state repo with the entry `director-vars-*.yml`. Without this you may accidently commit sensitive data to git.
+This project is is essentially a wrapper around [BUCC](https://github.com/starkandwayne/bucc). Just running bucc by itself creates a state dir within the bucc repo. We override the state location with the env var `BBL_STATE_DIR` which is what bucc uses. See the implementation [here](https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8). We use another git repo outside of this one to manage your state and the specific configuration of the BUCC instance you are going to manage.
 
 Next we need a way to tell our scripts and bucc where your state repo is..
 
@@ -52,11 +44,10 @@ export BUCC_WRAPPER_ROOT_DIR="/home/ubuntu/lab-ops"
 state_repo_root_dir="/home/ubuntu/lab-ops-state"
 export BBL_STATE_DIR="${state_repo_root_dir}/state" # BBL_STATE_DIR is the convention use by BUCC https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8  
 ```
-So either keep to the same convention using `/home/ubuntu/lab-ops-state` or change the `state_repo_root_dir` to point to the repo you just created
 
-You can create the state directory inside the new repo although the scripts we are about to run will create it if it does not exist.
+IMPORTANT: Check the Tools VM automation created a `.gitignore` file at the root of your new state repo with the entry `director-vars-*.yml`. Without this you may accidently commit sensitive data to git.
 
-EXTREMELY IMPORTANT: The state dir is ephemeral and is wiped out on teardown. Do NOT put your own bosh operator files in there unless they are copies!!
+IMPORTANT: The `/home/ubuntu/lab-ops-state/state` dir is ephemeral and is wiped out on teardown. Do NOT put your own bosh operator files in there unless they are copies!!
 
 At the root of that repo there needs to be a file called `infra-settings.yml` which we will generate in the next section. Anything you want to keep can be in the root of the repo just like the `infra-settings.yml` which will not be wiped out in between deployments
 
