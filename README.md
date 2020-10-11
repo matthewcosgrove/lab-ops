@@ -18,7 +18,11 @@ Some opinions that affect if this project will work out of the box for you inclu
 
 ## Prereqs
 
-Clone this repo, with the submodules
+* You need to use a vcenter admin account or check your user has the permissions outlined in the docs [here](https://github.com/cloudfoundry/bosh-vsphere-cpi-release/blob/master/docs/required_vcenter_privileges.md). TODO: Scripted pre-checks on the `GOVC_*` creds and config using govc commands. 
+* Instead you should go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS check the config is set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail. TODO: Ensure the supported DRS mode is set on the cluster via govc.
+* Deploy the [Tools VM](https://github.com/matthewcosgrove/deploy-tools-vm) that has been specifically configured to work with this solution.
+
+The tools VM above automates the clone of this repo, but if you are going solo with your own approach then you will need to remember to include the submodules
 
 ```
 git clone --recurse-submodules git@github.com:matthewcosgrove/lab-ops.git
@@ -26,58 +30,33 @@ git clone --recurse-submodules git@github.com:matthewcosgrove/lab-ops.git
 git clone --recurse-submodules https://github.com/matthewcosgrove/lab-ops.git
 ```
 
-Tested on Ubuntu 16.04 installed via OpsMan OVA 2.9. See an opinionated set up here: https://gist.github.com/matthewcosgrove/9e77386991d77873ca6700acda9225bc
-
-IT IS RECOMMENDED TO RUN THROUGH THE SET UP OF THE GIST ON UBUNTU 16.04 DEPLOYED VIA OPSMAN OVA. MOST INSTRUCTIONS AND SCRIPTS ASSUME THAT THIS IS THE SET UP YOU HAVE SO YOU MIGHT HAVE TO TWEAK THEM IF YOU ARE DOING SOMETHING DIFFERENT
-
-Instructions below will reference the gist above. Where relevant each instruction will say something like
-
-```
-WITH GIST: Do this semi-automated step
-
-WITHOUT GIST: Do this manual step or steps
-```
-
-The gist set up above does not currently install the CLIs we need. 
-
-* govc
-* spruce
-* jq
-
-Instead that script is in this repo, so assuming Ubuntu run the following from the root of this repo
-
-```
-./bin/00_install_bits_ubuntu.sh
-```
-
-Prereqs that we don't do check through the scripts but could do
-
-* Run pre-checks on the `GOVC_*` creds and config using govc commands. You need to use a vcenter admin account or check your user has the permissions outlined in the docs [here](https://github.com/cloudfoundry/bosh-vsphere-cpi-release/blob/master/docs/required_vcenter_privileges.md).
-* Ensure the supported DRS mode is set on the cluster via govc. Instead you should go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS check the config is set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail.
+After that you are on your own as the rest of this README assumes you are using the associated [Tools VM](https://github.com/matthewcosgrove/deploy-tools-vm).
 
 ## Your Settings and State
 
 This project is is essentially a wrapper around [BUCC](https://github.com/starkandwayne/bucc). Just running bucc by itself creates a state dir within the bucc repo. We override the state location with the env var `BBL_STATE_DIR` which is what bucc uses. See [here](https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8)
 
-So the first step is to create a repo outside of this one to manage your state and the specifics of the BUCC instance you are going to manage.
+So the first step is to create a repo outside of this one to manage your state and the specific configuration of the BUCC instance you are going to manage.
+
+```
+mkdir -p /home/ubuntu/lab-ops-state
+```
 
 IMPORTANT: Immediately create a `.gitignore` file at the root of your new state repo with the entry `director-vars-*.yml`. Without this you may accidently commit sensitive data to git.
 
 Next we need a way to tell our scripts and bucc where your state repo is..
 
-In your `~/.profile` put the lines
+In your `~/.profile` the Tools VM automation has already put the lines
 ```
-export BUCC_WRAPPER_ROOT_DIR="CHANGE-ME" # e.g. "/home/ubuntu/lab-ops"
-state_repo_root_dir="CHANGE-ME" # e.g. "/home/ubuntu/lab-ops-state"
-export BBL_STATE_DIR="${state_repo_root_dir}/state" # BBL_STATE_DIR is the convention use by BUCC https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8 
-
-# IMPORTANT: Sourcing of .functions MUST come after the lines above. See gist for examples 
+export BUCC_WRAPPER_ROOT_DIR="/home/ubuntu/lab-ops"
+state_repo_root_dir="/home/ubuntu/lab-ops-state"
+export BBL_STATE_DIR="${state_repo_root_dir}/state" # BBL_STATE_DIR is the convention use by BUCC https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L8  
 ```
-obviously changing `state_repo_name` to point to the repo you just created
+So either keep to the same convention using `/home/ubuntu/lab-ops-state` or change the `state_repo_root_dir` to point to the repo you just created
 
-You can create the state directory inside the new repo as well or just leave it to the scripts.
+You can create the state directory inside the new repo although the scripts we are about to run will create it if it does not exist.
 
-EXTREMELY IMPORTANT: The state dir is ephemeral and is wiped out on teardown. Do NOT put your own operator files in there unless they are copies!!
+EXTREMELY IMPORTANT: The state dir is ephemeral and is wiped out on teardown. Do NOT put your own bosh operator files in there unless they are copies!!
 
 At the root of that repo there needs to be a file called `infra-settings.yml` which we will generate in the next section. Anything you want to keep can be in the root of the repo just like the `infra-settings.yml` which will not be wiped out in between deployments
 
@@ -93,25 +72,14 @@ At the root of that repo there needs to be a file called `infra-settings.yml` wh
 bin/generate_infra_settings.sh
 ```
 
-2) Check the vcenter creds are available to govc. Follow instructions of output to set GOVC env vars manually if required which will be the case until the deploy script has been run further below.
-
-WITH GIST: `init_govc`
-
-WITHOUT GIST: cd to the root of this repo and `source ./bin/init_govc.sh`
+2) Check the vcenter creds are available to govc by running `init-govc`. Follow instructions of output to set GOVC env vars manually if required which will be the case until the deploy script has been run further below.
 
 ## Rollout BUCC
 
 To deploy
 
-WITH GIST:
 ```
 init_govc
-bin/deploy_bucc.sh
-```
-
-WITHOUT GIST:
-```
-source bin/init_govc.sh
 bin/deploy_bucc.sh
 ```
 
@@ -121,15 +89,8 @@ To interact with BUCC going forwards and have all the CLIs configured to work ou
 
 1) PREP ENV VARS
 
-WITH GIST:
 ```
-# Nothing to do here as env vars are sourced on login
-```
-
-WITHOUT GIST:
-```
-# Make sure your env vars are available in your shell by running the following command
-source <(bin/env)
+# Nothing to do here as env vars are sourced on login 
 ```
 
 2) PREP CLIs for automated logins
@@ -142,28 +103,13 @@ bucc bosh
 bosh vms
 bucc credhub
 credhub find
-# etc (see BUCC docs for more out of the box capabilities)
+# etc
 ```
+see [BUCC README docs](https://github.com/starkandwayne/bucc/blob/master/README.md) for more out of the box capabilities
 
 3) Look after your BUCC
 
-All the bucc commands that rely on state should be run through the bucc wrapper script. Other bucc commands can be run directly or via the wrapper script.
-
-However, by convention, it is preferred to do everything through `bin\bucc_wrapper.sh`. For example, the [bin/deploy_bucc.sh](bin/deploy_bucc.sh) also calls bucc via the [bin/bucc_wrapper.sh](bin/bucc_wrapper.sh) script. In fact, what actually happens is we have a function for this which abstracts it all behind `bucc_cmd` so that, just like the scripts, you can take advantage of the same mechanism as follows
-
-```
-source bin/bucc_wrapper_helper.sh
-bucc_cmd info
-```
-
-or for a bigger task like tearing everything down, which relies on access to the state...
-
-```
-# WARNING: This is the danger zone and this command will destroy your environment and bosh state
-source bin/bucc_wrapper_helper.sh
-bucc_cmd down
-```
-So instead of running "bucc down", by running the commands above you are doing it through the bucc_wrapper.sh script
+You should learn the bucc cli and note that all the bucc commands that rely on state have to be run through the bucc wrapper script. This project has symlinked the `bucc` command to force it to go through the [bin/bucc_wrapper.sh](bin/bucc_wrapper.sh) so that aspect is taken care of for you.
 
 ## Advanced Configuration - Extending the solution
 
