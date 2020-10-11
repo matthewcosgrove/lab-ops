@@ -1,5 +1,3 @@
-# Copy the text below into your ~/.profile and populate for your environment
-
 # GOVC specific config. GOVC_ prefix usually implies using govc path identifiers e.g. /drinks-cl/vm/my-vm-name
 export GOVC_URL=""
 export GOVC_NETWORK=""
