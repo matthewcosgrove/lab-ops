@@ -58,7 +58,7 @@ At the root of that repo there needs to be a file called `infra-settings.yml` wh
 
 1) We generate the `infra-settings.yml` via env vars.
   
-  a) Populate the env vars you will find at the bottom of your `~/.profile`. For quick reference, they will look something like [this](reference-env-vars.txt)
+  a) Populate the env vars you will find in a file created by the Tools VM automation `~/.env_bucc`. For quick reference, they will look something like [this](reference-env-vars.txt)
   
   b) From the root of this repo run the following script
 
