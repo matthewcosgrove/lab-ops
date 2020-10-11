@@ -19,7 +19,7 @@ Some opinions that affect if this project will work out of the box for you inclu
 ## Prereqs
 
 * You need to use a vcenter admin account or check your user has the permissions outlined in the docs [here](https://github.com/cloudfoundry/bosh-vsphere-cpi-release/blob/master/docs/required_vcenter_privileges.md). TODO: Scripted pre-checks on the `GOVC_*` creds and config using govc commands. 
-* Instead you should go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS check the config is set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail. TODO: Ensure the supported DRS mode is set on the cluster via govc.
+* The DRS config needs to be set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail. Go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS to check. TODO: Ensure the supported DRS mode is set on the cluster via govc.
 * Deploy the [Tools VM](https://github.com/matthewcosgrove/deploy-tools-vm) that has been specifically configured to work with this solution.
 
 The tools VM above automates the clone of this repo, but if you are going solo with your own approach then you will need to remember to include the submodules
