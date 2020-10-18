@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export VMWARE_HOST="${GOVC_URL}"
+export VMWARE_USER="${GOVC_USERNAME}"
+export VMWARE_PASSWORD="${GOVC_PASSWORD}"
+export VMWARE_VALIDATE_CERTS=no
