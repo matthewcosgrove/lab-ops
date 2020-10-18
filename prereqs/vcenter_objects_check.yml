@@ -1,5 +1,7 @@
 - name: Check vCenter
   hosts: localhost
+  vars:
+    datastore: "{{ lookup('env', 'GOVC_DATASTORE') }}"
 
   collections:
   - vmware.vmware_rest
@@ -14,5 +16,7 @@
   - debug: msg="{{ my_cluster }}"
   - name: "datastores"
     vcenter_datastore_info:
+      filter_names:
+      - "{{ datastore }}"
     register: my_datastores
   - debug: msg="{{ my_datastores }}"
