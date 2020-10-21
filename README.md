@@ -33,6 +33,8 @@ git clone --recurse-submodules git@github.com:matthewcosgrove/lab-ops.git
 git clone --recurse-submodules https://github.com/matthewcosgrove/lab-ops.git
 ```
 
+and also ensure your local system has the correct [bosh dependencies](https://bosh.io/docs/cli-v2-install/#additional-dependencies)
+
 After that you are on your own as the rest of this README assumes you are using the associated [Tools VM](https://github.com/matthewcosgrove/deploy-tools-vm).
 
 ## Your Settings and State
