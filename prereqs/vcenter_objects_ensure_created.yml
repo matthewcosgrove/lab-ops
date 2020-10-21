@@ -1,0 +1,44 @@
+- name: Ensure vCenter objects are created
+  hosts: localhost
+  vars:
+    govc_cluster: "{{ lookup('env', 'GOVC_CLUSTER') }}"
+    govc_resource_pool: "{{ lookup('env', 'GOVC_RESOURCE_POOL') }}"
+
+  collections:
+  - vmware.vmware_rest
+  tasks:
+  - name: "cluster"
+    vcenter_cluster_info:
+      filter_names:
+      - "{{ govc_cluster }}"
+    register: lab_ops_cluster
+  - debug: msg="{{ lab_ops_cluster }}"
+  - name: "cluster details"
+    vcenter_cluster_info:
+      cluster: '{{ lab_ops_cluster.value[0].cluster }}'
+    register: lab_ops_cluster_details
+  - debug: msg="{{ lab_ops_cluster_details }}"
+  - name: "check resource pool exists"
+    vcenter_resourcepool_info:
+      filter_names: "{{ govc_resource_pool  }}"
+      filter_clusters: "{{ lab_ops_cluster_details.id }}"
+    register: rp_already_exists
+  - debug: msg="{{ rp_already_exists }}"
+  - name: "ensure resource pool created"
+    vcenter_resourcepool:
+      name: "{{ govc_resource_pool }}"
+      parent: "{{ lab_ops_cluster_details.value.resource_pool }}"
+    register: lab_ops_resource_pool_created
+    when: not rp_already_exists.value
+  - debug: msg="{{ lab_ops_resource_pool_created }}"
+  - name: "resource pool"
+    vcenter_resourcepool_info:
+      filter_names: "{{ govc_resource_pool  }}"
+      filter_clusters: "{{ lab_ops_cluster_details.id }}"
+    register: lab_ops_resource_pool
+  - debug: msg="{{ lab_ops_resource_pool }}"
+  - name: "resource pool details"
+    vcenter_resourcepool_info:
+      resource_pool: '{{ lab_ops_resource_pool.value[0].resource_pool }}'
+    register: lab_ops_resource_pool_details
+  - debug: msg="{{ lab_ops_resource_pool_details }}"

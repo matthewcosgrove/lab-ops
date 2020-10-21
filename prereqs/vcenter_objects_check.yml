@@ -1,22 +1,40 @@
 - name: Check vCenter
   hosts: localhost
   vars:
-    datastore: "{{ lookup('env', 'GOVC_DATASTORE') }}"
+    govc_datacenter: "{{ lookup('env', 'GOVC_DATACENTER') }}"
+    govc_cluster: "{{ lookup('env', 'GOVC_CLUSTER') }}"
+    govc_datastore: "{{ lookup('env', 'GOVC_DATASTORE') }}"
 
   collections:
   - vmware.vmware_rest
   tasks:
-  - name: "datacenters"
+  - name: "datacenter"
     vcenter_datacenter_info:
-    register: my_datacenters
-  - debug: msg="{{ my_datacenters }}"
-  - name: "clusters"
-    vcenter_cluster_info:
-    register: my_cluster
-  - debug: msg="{{ my_cluster }}"
-  - name: "datastores"
+      filter_names:
+      - "{{ govc_datacenter }}"
+    register: lab_ops_datacenter
+  - debug: msg="{{ lab_ops_datacenter }}"
+  - name: "datastore"
     vcenter_datastore_info:
       filter_names:
-      - "{{ datastore }}"
-    register: my_datastores
-  - debug: msg="{{ my_datastores }}"
+      - "{{ govc_datastore }}"
+    register: lab_ops_datastore
+  - debug: msg="{{ lab_ops_datastore }}"
+  - name: "cluster"
+    vcenter_cluster_info:
+      filter_names:
+      - "{{ govc_cluster }}"
+    register: lab_ops_cluster
+  - debug: msg="{{ lab_ops_cluster }}"
+  - name: "assert cluster has DRS enabled"
+    assert:
+      that: lab_ops_cluster.value[0].drs_enabled
+      fail_msg: "DRS has to be enabled so bosh will work effectively. Can be either full or partial"
+      success_msg: "DRS is enabled so bosh will work effectively"
+  - name: "cluster details"
+    vcenter_cluster_info:
+      cluster: '{{ lab_ops_cluster.value[0].cluster }}'
+    register: lab_ops_cluster_details
+  - debug: msg="{{ lab_ops_cluster_details }}"
+  - name: "moid of cluster resource pool to be used as parent"
+    debug: msg="{{ lab_ops_cluster_details.value.resource_pool }}"
