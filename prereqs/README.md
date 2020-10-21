@@ -3,6 +3,16 @@
 
 Assuming you are on vcenter 7, the playbooks below should work. I'm aware that POST on resource pool was not supported on vcenter 6.5 and 6.7
 
+Before running, install the required tools
+
+```
+# check your govc vars, these need to be there
+env | grep GOVC_
+# cd into this project
+./prereq/install_vmware_rest.sh
+source source_vmware_vars.sh
+```
+
 ### Step 1 - Check vCenter objects
 
 ```
