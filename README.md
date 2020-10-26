@@ -18,7 +18,7 @@ Some opinions that affect if this project will work out of the box for you inclu
 
 ## Prereqs
 
-NOTE: Use the Ansible playbooks as described in [prereq/README.md](prereq/README.md) to check and set up your vcenter objects as required.
+NOTE: Use the Ansible playbooks as described in [prereqs/README.md](prereqs/README.md) to check and set up your vcenter objects as required.
 
 * You need to use a vcenter admin account or check your user has the permissions outlined in the docs [here](https://github.com/cloudfoundry/bosh-vsphere-cpi-release/blob/master/docs/required_vcenter_privileges.md).
 * `GOVC_` env vars configured. See [here](https://github.com/matthewcosgrove/deploy-tools-vm/blob/main/ansible/ubuntu/templates/env_bucc.j2) for how we configure them in the Tools VM.
