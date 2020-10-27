@@ -9,7 +9,7 @@ Before running, install the required tools
 # check your govc vars, these need to be there
 env | grep GOVC_
 # cd into this project
-./prereq/install_vmware_rest.sh
+./prereqs/install_vmware_rest.sh
 source source_vmware_vars.sh
 ```
 
@@ -17,14 +17,14 @@ source source_vmware_vars.sh
 
 ```
 # cd into this project
-ansible-playbook prereq/vcenter_objects_check.yml
+ansible-playbook prereqs/vcenter_objects_check.yml
 ```
 
 ### Step 2 - Ensure vCenter objects get created
 
 ```
 # cd into this project
-ansible-playbook prereq/vcenter_objects_ensure_created.yml
+ansible-playbook prereqs/vcenter_objects_ensure_created.yml
 ```
 
 ### Alternative Step 2 with govc scripts
@@ -33,5 +33,5 @@ If for some reason you cannot use the playbook above, use this script instead
 
 ```
 # cd into this project
-./prereq/create_vcenter_objects_via_govc.sh
+./prereqs/create_vcenter_objects_via_govc.sh
 ```
