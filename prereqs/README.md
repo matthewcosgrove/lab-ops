@@ -10,7 +10,7 @@ Before running, install the required tools
 env | grep GOVC_
 # cd into this project
 ./prereqs/install_vmware_rest.sh
-source source_vmware_vars.sh
+source prereqs/source_vmware_vars.sh
 ```
 
 ### Step 1 - Check vCenter objects
