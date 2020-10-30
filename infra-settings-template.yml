@@ -7,7 +7,7 @@ network_name: (( grab $GOVC_NETWORK ))
 vcenter_cluster: (( grab $GOVC_CLUSTER ))
 vcenter_dc: (( grab $GOVC_DATACENTER ))
 vcenter_disks: bucc-disks # Recommended not to change, or bosh might not be able to locate the disk on a re-deploy
-vcenter_ds: (( grab $VCENTER_DATASTORE_PATTERN ))
+vcenter_ds: (( grab $BUCC_BOSH_VCENTER_DATASTORE_PATTERN ))
 vcenter_ip: (( grab $GOVC_URL ))
 vcenter_templates: (( grab vcenter_vms ))
 vcenter_vms: (( grab $VCENTER_FOLDER_NAME ))
@@ -16,7 +16,7 @@ vcenter_vm_disk: 200000
 vcenter_vm_ram: 16640
 
 # flag: --dns
-vcenter_dns: (( grab $VCENTER_DNS ))
+vcenter_dns: (( grab $BUCC_BOSH_VCENTER_DNS ))
 
 # flag: --resource-pool
 vcenter_rp: (( grab $VCENTER_RESOURCE_POOL_NAME ))
