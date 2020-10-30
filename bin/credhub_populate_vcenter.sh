@@ -2,32 +2,28 @@
 
 set -euo pipefail
 
-crednames=( \
-  vcenter_username \
-  vcenter_password
-)
 credpath_prefix="/concourse/main/"
-for credname in "${crednames[@]}"
-do
-  credpath="${credpath_prefix}${credname}"
+
+function credhub_set(){
+  local credname="${1}"
+  local credpath="${credpath_prefix}${credname}"
   if ! credhub get -n "${credpath}" > /dev/null 2>&1;then
-    echo "Please enter cred for: ${credpath}"
-    if [[ "${credname}" == *password ]];then
-      credhub set -n "${credpath}" -t password
-    else
-      credhub set -n "${credpath}" -t value
-    fi
+    echo "Setting credential for ${credpath}"
+    credhub set -n "${credpath}" -t value -v "${2}"
   else
-    echo "${credpath} already created, skipping.."
+    echo "${credpath} already created, skipping... NOTE: if required to change run command manually \"credhub set -n "${credpath}" -t value\" "
   fi
-done
+}
 
-credhub set -n "${credpath_prefix}"govc_url -t value -v "${GOVC_URL}"
-credhub set -n "${credpath_prefix}"govc_datacenter -t value -v "${GOVC_DATACENTER}"
-credhub set -n "${credpath_prefix}"govc_cluster -t value -v "${GOVC_CLUSTER}"
-credhub set -n "${credpath_prefix}"govc_network -t value -v "${GOVC_NETWORK}"
-credhub set -n "${credpath_prefix}"govc_vm_folder_path -t value -v "${GOVC_VM_FOLDER_PATH}"
+credhub_set govc_url "${GOVC_URL}"
+credhub_set vcenter_username "${GOVC_USERNAME}"
+credhub_set vcenter_password "${GOVC_PASSWORD}"
+credhub_set govc_datacenter "${GOVC_DATACENTER}"
+credhub_set govc_cluster "${GOVC_CLUSTER}"
+credhub_set govc_network "${GOVC_NETWORK}"
+credhub_set govc_folder "${GOVC_FOLDER}"
+credhub_set govc_vm_folder_path "${GOVC_FOLDER}" # keeping for backwards compatibility
 
-credhub set -n "${credpath_prefix}"vcenter_primary_datastore -t value -v "${VCENTER_PRIMARY_DATASTORE}"
-credhub set -n "${credpath_prefix}"vcenter_resource_pool_name -t value -v "${VCENTER_RESOURCE_POOL_NAME}"
-credhub set -n "${credpath_prefix}"vcenter_folder_name -t value -v "${VCENTER_FOLDER_NAME}"
+credhub_set vcenter_primary_datastore "${GOVC_DATASTORE}"
+credhub_set vcenter_resource_pool_name "${VCENTER_RESOURCE_POOL_NAME}"
+credhub_set vcenter_folder_name "${VCENTER_FOLDER_NAME_RELATIVE_PATH}"
