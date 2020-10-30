@@ -75,11 +75,18 @@ bin/generate_infra_settings.sh
 
 ## Rollout BUCC
 
-To deploy
+To deploy just bucc with and external Concourse worker VM
 
 ```
 init-govc
 bin/deploy_bucc.sh
+```
+
+To deploy bucc plus Minio
+
+```
+init-govc
+bin/deploy_full_stack.sh
 ```
 
 ## Day2Ops BUCC

@@ -8,6 +8,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 
 "$SCRIPT_DIR"/deploy_bucc.sh
+"$SCRIPT_DIR"/bosh_deploy_minio_s3.sh
 
-echo "TODO: Deploy Minio"
 echo "TODO: Deploy Promethues"
