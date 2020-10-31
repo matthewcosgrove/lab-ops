@@ -16,7 +16,7 @@ bucc_env_file_to_source="${SCRIPT_DIR}"/bucc_env
 
 # Idempotent approach which is meant to affect first run through to prevent BUCC generating the vars file https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L69
 mkdir -p "$STATE_VARS_DIR"
-touch "$STATE_VARS_DIR/director-vars-file.yml"
+touch "$STATE_VARS_FILE"
 cat <<EOF > "$STATE_VARS_DIR/flags"
 dns
 resource-pool
@@ -37,7 +37,7 @@ EOF
 
 spruce merge "${STATE_ROOT_DIR}"/infra-settings.yml \
         "${TMPDIR}"/deploy-inputs.yml \
-        > "${STATE_VARS_DIR}"/director-vars-file.yml
+        > "${STATE_VARS_FILE}"
 
 bucc_cmd up --cpi vsphere --debug
 echo "Deploy completed successfully"
@@ -46,6 +46,7 @@ source <("${bucc_env_file_to_source}")
 bucc_cmd test
 "${SCRIPT_DIR}"/test_default_concourse_worker_exists.sh
 store_bucc_interpolation_result
+store_bucc_state_director_vars
 
 echo "[SUCCESS] Phase 1 complete. BUCC installed in its default configuration"
 echo "Phase 2: Swapping out internal Concourse worker for a bosh-managed Concourse worker VM"

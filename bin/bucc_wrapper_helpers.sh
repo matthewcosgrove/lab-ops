@@ -215,3 +215,14 @@ function store_bucc_interpolation_result(){
   echo "Persisting the actual bosh.yml interpolation as ${STATE_BUCC_CURRENT_YAML}"
   bucc_cmd int | sed '/BEGIN RSA PRIVATE KEY/,/END RSA PRIVATE KEY/{//!d;};' | sed '/BEGIN CERTIFICATE/,/END CERTIFICATE/{//!d;};' > "${STATE_BUCC_CURRENT_YAML}"
 }
+
+function credhub_set_json(){
+  local credpath_prefix="/concourse/main/"
+  local credhub_path="${credpath_prefix}""${1}"
+  credhub set -t json -n "${credhub_path}" -v "${2}"
+}
+
+function store_bucc_state_director_vars(){
+  credhub_set_json bucc_state_director_vars_file "$(spruce json "${STATE_VARS_FILE}")"
+  credhub_set_json bucc_state_director_vars_store "$(spruce json "${STATE_VARS_STORE}")"
+}
