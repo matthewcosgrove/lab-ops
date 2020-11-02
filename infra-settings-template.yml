@@ -10,7 +10,7 @@ vcenter_disks: bucc-disks # Recommended not to change, or bosh might not be able
 vcenter_ds: (( grab $BUCC_BOSH_VCENTER_DATASTORE_PATTERN ))
 vcenter_ip: (( grab $GOVC_URL ))
 vcenter_templates: (( grab vcenter_vms ))
-vcenter_vms: (( grab $VCENTER_FOLDER_NAME ))
+vcenter_vms: (( grab $VCENTER_FOLDER_NAME_RELATIVE_PATH ))
 vcenter_vm_cpu: 4
 vcenter_vm_disk: 200000
 vcenter_vm_ram: 16640
