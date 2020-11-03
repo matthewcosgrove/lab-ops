@@ -1,0 +1,5 @@
+# OPTIONAL: Manually populate in the following format if required
+# vcenter_ca_cert: |
+#  -----BEGIN CERTIFICATE-----
+#  -----END CERTIFICATE-----
+

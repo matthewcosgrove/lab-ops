@@ -17,15 +17,7 @@ export BOSH_OPS_FILES_DIR="${BOSH_MANIFEST_DIR}"/ops
 export STATE_OPS_FILE_PREFIX="z-bucc-wrapper-"
 export STATE_BUCC_CURRENT_YAML="${STATE_VARS_DIR}"/director-vars-bucc-current.yml # Follow convention to prevent commit (i.e.) .gitignore should contain entry director-vars-*
 export BUCC_SUBMODULE_LOCATION="${REPO_ROOT_DIR}"/src/bucc
-export BUCC_INFRA_SETTINGS_FILE="${STATE_ROOT_DIR}"/infra-settings.yml
-if [ -f "${BUCC_INFRA_SETTINGS_FILE}" ]; then
-  # has to exist for first bin/bucc_deploy.sh run by primary user
-  bosh_env_alias=$(bosh int "${BUCC_INFRA_SETTINGS_FILE}" --path /alias)
-else
-  # relied upon as copied over prior to cloning state dir containing infra-settings.yml for secondary users
-  bosh_env_alias=$(bosh int "${STATE_VARS_FILE}" --path /alias)
-fi
-export BOSH_ENV_ALIAS="${bosh_env_alias}"
+export BOSH_ENV_ALIAS="bucc"
 
 function bucc_cmd() {
   "${REPO_ROOT_DIR}"/bin/bucc_wrapper.sh "$@"

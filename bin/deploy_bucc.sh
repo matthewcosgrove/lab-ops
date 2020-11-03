@@ -23,21 +23,58 @@ resource-pool
 EOF
 
 # prepare ops files by copying over the ones based on if config has been provided
-echo "Checking if vcenter_ca_cert needs to be configured. Parsing ${BUCC_INFRA_SETTINGS_FILE} to see if optional field vcenter_ca_cert was added"
-if bosh int "${BUCC_INFRA_SETTINGS_FILE}" --path /vcenter_ca_cert ; then
-  cp_ops_file_to_state_dir "custom-ca.yml"
+export BUCC_VCENTER_CA_CERT_YAML_FILE="${BBL_STATE_DIR}"/vcenter-ca-cert.yml
+echo "Checking if vcenter_ca_cert needs to be configured by checking for file ${BUCC_VCENTER_CA_CERT_YAML_FILE}" 
+if [ -f $BUCC_VCENTER_CA_CERT_YAML_FILE ];then
+  if bosh int "${BUCC_VCENTER_CA_CERT_YAML_FILE}" --path /vcenter_ca_cert ; then
+    cp_ops_file_to_state_dir "custom-ca.yml"
+  else
+    echo "No vcenter_ca_cert config found so ignoring. If required add it to the file ${BUCC_VCENTER_CA_CERT_YAML_FILE}. See vcenter-ca-cert-template.yml"
+  fi
 else
-  echo "No vcenter_ca_cert config found so ignoring. If required add it to the file ${BUCC_INFRA_SETTINGS_FILE}"
+ echo "No vcenter_ca_cert config found so ignoring. If required add it to the file ${BUCC_VCENTER_CA_CERT_YAML_FILE}. See vcenter-ca-cert-template.yml"
 fi
 
-cat <<EOF > "${TMPDIR}"/deploy-inputs.yml
-vcenter_password: '${GOVC_PASSWORD}'
-vcenter_user: '${GOVC_USERNAME}'
+echo "Merging in env vars into state yaml file"
+cat <<'EOF' > "${TMPDIR}"/deploy-inputs.yml
+vcenter_password: (( grab $GOVC_PASSWORD ))
+vcenter_user: (( grab $GOVC_USERNAME ))
+
+director_name: (( grab $BOSH_ENV_ALIAS ))
+alias: (( grab $BOSH_ENV_ALIAS ))
+internal_cidr: (( grab $BUCC_VM_CIDR ))
+internal_gw: (( grab $BUCC_VM_GATEWAY ))
+internal_ip: (( grab $BUCC_VM_IP ))
+network_name: (( grab $GOVC_NETWORK ))
+vcenter_cluster: (( grab $GOVC_CLUSTER ))
+vcenter_dc: (( grab $GOVC_DATACENTER ))
+vcenter_disks: bucc-disks # Recommended not to change, or bosh might not be able to locate the disk on a re-deploy
+vcenter_ds: (( grab $BUCC_BOSH_VCENTER_DATASTORE_PATTERN ))
+vcenter_ip: (( grab $GOVC_URL ))
+vcenter_templates: (( grab vcenter_vms ))
+vcenter_vms: (( grab $VCENTER_FOLDER_NAME_RELATIVE_PATH ))
+vcenter_vm_cpu: 4
+vcenter_vm_disk: 200000
+vcenter_vm_ram: 16640
+
+# flag: --dns
+vcenter_dns: (( grab $BUCC_BOSH_VCENTER_DNS ))
+
+# flag: --resource-pool
+vcenter_rp: (( grab $VCENTER_RESOURCE_POOL_NAME ))
+
+# minio deployment
+minio_server_region: bucc-minio
+
+# bosh cloud-config
+minio_ip: (( grab $BUCC_BOSH_STATIC_IP_MINIO ))
+vcenter_datastore_names: (( grab $BUCC_BOSH_VCENTER_DATASTORE_NAMES_YAML_ARRAY ))
+reserved_ip_ranges: (( grab $BUCC_BOSH_RESERVED_IP_RANGES_YAML_ARRAY ))
+concourse_external_worker_ip: (( grab $BUCC_BOSH_STATIC_IP_CONCOURSE_WORKER ))
 EOF
 
-spruce merge "${STATE_ROOT_DIR}"/infra-settings.yml \
-        "${TMPDIR}"/deploy-inputs.yml \
-        > "${STATE_VARS_FILE}"
+spruce merge "${TMPDIR}"/deploy-inputs.yml | grep -v password
+spruce merge "${TMPDIR}"/deploy-inputs.yml > "${STATE_VARS_FILE}"
 
 bucc_cmd up --cpi vsphere --debug
 echo "Deploy completed successfully"
