@@ -6,7 +6,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 
 : "${BOSH_OPS_FILES_DIR:? BOSH_OPS_FILES_DIR must be set }"
-: "${BUCC_INFRA_SETTINGS_FILE:? BUCC_INFRA_SETTINGS_FILE must be set }"
+: "${STATE_VARS_FILE:? STATE_VARS_FILE must be set }"
 : "${BOSH_MANIFEST_DIR:? BOSH_MANIFEST_DIR must be set }"
 
 "${SCRIPT_DIR}"/bosh_update_cloud_config.sh
@@ -14,7 +14,7 @@ source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 echo "Starting bosh deploy process.."
 export BOSH_INTERPOLATE_VALIDATION_CREDHUB_VAR_EXCLUSIONS="secret_key access_key"
 declare -a flags
-bosh_vars_file="${BUCC_INFRA_SETTINGS_FILE}"
+bosh_vars_file="${STATE_VARS_FILE}"
 flags+=(--vars-file ${bosh_vars_file})
 
 manifest="${BOSH_MANIFEST_DIR}"/minio-deployment.yml

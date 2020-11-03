@@ -42,11 +42,11 @@ function destroy_by_vm_name() {
   done
 }
 
-GOVC_DATACENTER=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -r '.vcenter_dc')
+GOVC_DATACENTER=$(spruce json "${STATE_VARS_FILE}" | jq -r '.vcenter_dc')
 echo "Brute force teardown for target ${GOVC_DATACENTER} in ${GOVC_URL} with user ${GOVC_USERNAME}"
 
-concourse_external_worker_ip=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -r '.concourse_external_worker_ip')
-vcenter_templates=$(spruce json "${BUCC_INFRA_SETTINGS_FILE}" | jq -r '.vcenter_templates')
+concourse_external_worker_ip=$(spruce json "${STATE_VARS_FILE}" | jq -r '.concourse_external_worker_ip')
+vcenter_templates=$(spruce json "${STATE_VARS_FILE}" | jq -r '.vcenter_templates')
 export VCENTER_STEMCELL_FOLDER_PATH="/$GOVC_DATACENTER/vm/$vcenter_templates"
 bucc_vm_name=$(jq -r '.current_vm_cid' < "${STATE_VARS_DIR}"/bosh-state.json)
 
