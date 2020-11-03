@@ -120,3 +120,5 @@ You should learn the bucc cli and note that all the bucc commands that rely on s
 ## Advanced Configuration - Extending the solution
 
 Assuming you understand [bosh](https://bosh.io/docs/) (if not see this [tutorial](https://ultimateguidetobosh.com/) and this [explanation](https://bosh.io/docs/problems/)), any customizations should be put in the `$BBL_STATE_DIR/state/operators` directory for BUCC to find and integrate via the normal [bosh operator file mechanism](https://bosh.io/docs/cli-ops-files/)
+
+Want to integrate additional bosh releases? See this list sorted by updated date https://github.com/search?o=desc&p=2&q=bosh+release&s=updated&type=Repositories
