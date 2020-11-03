@@ -74,7 +74,16 @@ concourse_external_worker_ip: (( grab $BUCC_BOSH_STATIC_IP_CONCOURSE_WORKER ))
 EOF
 
 spruce merge "${TMPDIR}"/deploy-inputs.yml | grep -v password
-spruce merge "${TMPDIR}"/deploy-inputs.yml > "${STATE_VARS_FILE}"
+
+export BUCC_EXTRA_VARS_YAML_FILE="${BBL_STATE_DIR}"/../bucc-extra-vars.yml
+echo "Checking if extra vars need to be configured by checking for file ${BUCC_EXTRA_VARS_YAML_FILE}"
+if [ -f $BUCC_EXTRA_VARS_YAML_FILE ];then
+  echo "Extra vars to be processed"
+  cat "${BUCC_EXTRA_VARS_YAML_FILE}"
+  spruce merge "${TMPDIR}"/deploy-inputs.yml "${BUCC_EXTRA_VARS_YAML_FILE}" > "${STATE_VARS_FILE}"
+else
+  spruce merge "${TMPDIR}"/deploy-inputs.yml > "${STATE_VARS_FILE}"
+fi
 
 bucc_cmd up --cpi vsphere --debug
 echo "Deploy completed successfully"
