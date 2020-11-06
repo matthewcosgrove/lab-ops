@@ -3,7 +3,7 @@
 : "${BBL_STATE_DIR:? BBL_STATE_DIR must be set for BUCC to use. See README for details }"
 export FINAL_INFRA_SETTINGS_FILE=$BBL_STATE_DIR/vars/director-vars-file.yml
 
-source "${BBL_STATE_DIR}"/env_bucc
+source "${BBL_STATE_DIR}"/../env_bucc
 
 export GOVC_INSECURE=true # don't do this at home kids
 env | grep GOVC_URL
