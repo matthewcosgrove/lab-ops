@@ -83,13 +83,13 @@ At the root of that repo there needs to be a file called `env_bucc` which we wil
 
 Either
 
-1) Deploy just bucc with and external Concourse worker VM
+1) Deploy just lab-ops core functionality (bucc with and external Concourse worker VM)
 
 ```
 /home/ubuntu/lab-ops/bin/deploy_bucc.sh
 ```
 
-2) OR, to deploy bucc plus Minio
+2) OR, to deploy lab-ops core functionality plus Minio all in one go
 
 ```
 /home/ubuntu/lab-ops/bin/deploy_full_stack.sh
