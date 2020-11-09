@@ -28,7 +28,7 @@ NOTE: Use the Ansible playbooks as described in [prereqs/README.md](prereqs/READ
 
 * You need to use a vcenter admin account or check your user has the permissions outlined in the docs [here](https://github.com/cloudfoundry/bosh-vsphere-cpi-release/blob/master/docs/required_vcenter_privileges.md).
 * `GOVC_` env vars chosen for your installation. i.e. you have determined your choice of cluster, resource pool, vm folder etc. See [env_bucc_template](env_bucc_template) which will be used in the set up steps below.
-* The DRS config needs to be set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail. Go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS to check. The Ansible playbook will check this and fail if not set up as required.
+* The DRS config needs to be set to "Partially Automated" or "Fully Automated". If set to "Manual" bosh VM creation will fail. Go to the vcenter UI, click on your cluster, go to the Configure tab, and under Services > vSphere DRS to check. The [prereq Ansible playbook](prereqs/vcenter_objects_check.yml) mentioned above will check this and fail if not set up as required.
 * Deploy the [Tools VM](https://github.com/matthewcosgrove/deploy-tools-vm) that has been specifically configured to work with this solution.
 
 The tools VM above automates the clone of this repo, but if you are going solo with your own approach then you will need to remember to include the submodules
