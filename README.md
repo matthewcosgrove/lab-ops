@@ -81,19 +81,21 @@ At the root of that repo there needs to be a file called `env_bucc` which we wil
 
 ## Rollout BUCC
 
-To deploy just bucc with and external Concourse worker VM
+Either
+
+1) Deploy just bucc with and external Concourse worker VM
 
 ```
 /home/ubuntu/lab-ops/bin/deploy_bucc.sh
 ```
 
-To deploy bucc plus Minio
+2) OR, to deploy bucc plus Minio
 
 ```
 /home/ubuntu/lab-ops/bin/deploy_full_stack.sh
 ```
 
-Now commit and push your state repo!
+Once the deployment is complete commit and push your state repo!
 
 ## Day2Ops BUCC
 
