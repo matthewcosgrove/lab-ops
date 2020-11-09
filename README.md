@@ -14,7 +14,13 @@ Some opinions that affect if this project will work out of the box for you inclu
 * You use resource pools
 * You will only run one BUCC on your Tools VM (i.e. where you will clone this repo to and run all the commands)
 * The bosh cli alias and the fly cli alias are both `bucc`
-* You treat the environment as ephemeral. The state repo for BOSH described below is your responsibility to manage and a deep understanding of BOSH is recommended for Day 2 Ops maintenance, which is possible but requires expertise. Failing that, to avoid digging into the weeds when a need for troubleshooting arises, one option is to just blow away the state directory and start again. You may still have some clean up to do manually though... which is where your vcenter skills become important. Just make sure you have scripted up any population of CredHub (see [bin/credhub_populate_vcenter.sh](bin/credhub_populate_vcenter.sh) for an example of this) and have everything else in git. You can kiss goodbye to such things as your Concourse history though unless you fancy running Postgres back ups ([bucc does support BBR for back ups btw](https://github.com/starkandwayne/bucc#backup--restore)).
+* You treat the environment as ephemeral. See "State Caveat" section below.
+
+### State Caveat
+
+The state repo for BOSH described in detail further below is your responsibility to manage and a deep understanding of BOSH is recommended for Day 2 Ops maintenance. Failing that, to avoid digging into the weeds when a need for troubleshooting arises, one option is to just blow away the state directory and start again. You may still have some clean up to do manually though... which is where your vcenter skills become important. 
+
+Just make sure you have scripted up any population of CredHub (see [bin/credhub_populate_vcenter.sh](bin/credhub_populate_vcenter.sh) for an example of this) and have everything else in git. There are various things you can do in addition to this. You could run back ups on the CredHub via export/import and your Concourse config/history could be saved by running Postgres back ups ([bucc does support BBR for back ups](https://github.com/starkandwayne/bucc#backup--restore)).
 
 ## Prereqs
 
@@ -87,6 +93,8 @@ To deploy bucc plus Minio
 /home/ubuntu/lab-ops/bin/deploy_full_stack.sh
 ```
 
+Now commit and push your state repo!
+
 ## Day2Ops BUCC
 
 To interact with BUCC going forwards and have all the CLIs configured to work out the box
@@ -123,4 +131,4 @@ Assuming you understand [bosh](https://bosh.io/docs/) (if not see this [tutorial
 
 Want to integrate additional bosh releases? See this list sorted by updated date https://github.com/search?o=desc&p=2&q=bosh+release&s=updated&type=Repositories
 
-To extend the `cloud-config.yml` copy the (infra/cloud-config.yml)[infra/cloud-config.yml] into your lab-ops-state root directory and start editing according to your needs. This override will occur in (bin/bosh_update_cloud_config.sh)[bin/bosh_update_cloud_config.sh]. Additional vars should then be placed in the yaml `bucc-extra-vars.yml` within the root of the lab-ops-state dir
+To extend the `cloud-config.yml` copy the [infra/cloud-config.yml](infra/cloud-config.yml) into your lab-ops-state root directory and start editing according to your needs. This override will occur in [bin/bosh_update_cloud_config.sh](bin/bosh_update_cloud_config.sh). Additional vars should then be placed in the yaml `bucc-extra-vars.yml` within the root of the lab-ops-state dir
