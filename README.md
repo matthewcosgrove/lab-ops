@@ -103,7 +103,7 @@ To interact with BUCC going forwards and have all the CLIs configured to work ou
 
 ```
 init-govc
-# Nothing else to do here as BUCC env vars are sourced on login 
+# Nothing else to do here as BUCC env vars are sourced on login to the Tools VM
 ```
 
 2) PREP CLIs for automated logins
