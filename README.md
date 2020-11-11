@@ -129,8 +129,8 @@ You should learn the bucc cli and note that all the bucc commands that rely on s
 
 ## Advanced Configuration - Extending the solution
 
-Assuming you understand [bosh](https://bosh.io/docs/) (if not see this [tutorial](https://ultimateguidetobosh.com/) and this [explanation](https://bosh.io/docs/problems/)), any customizations should be put in the `$BBL_STATE_DIR/state/operators` directory for BUCC to find and integrate via the normal [bosh operator file mechanism](https://bosh.io/docs/cli-ops-files/)
+Assuming you understand [bosh](https://bosh.io/docs/) (if not see this [tutorial](https://ultimateguidetobosh.com/) and this [explanation](https://bosh.io/docs/problems/)), any customizations should be put in the `$BBL_STATE_DIR/state/operators` directory for BUCC to find and integrate via the normal [bosh operator file mechanism](https://bosh.io/docs/cli-ops-files/). But as discussed in the section on managing state, make sure your bosh operator files are backed up elsewhere.
 
 Want to integrate additional bosh releases? See this list sorted by updated date https://github.com/search?o=desc&p=2&q=bosh+release&s=updated&type=Repositories
 
-To extend the `cloud-config.yml` copy the [infra/cloud-config.yml](infra/cloud-config.yml) into your lab-ops-state root directory and start editing according to your needs. This override will occur in [bin/bosh_update_cloud_config.sh](bin/bosh_update_cloud_config.sh). Additional vars should then be placed in the yaml `bucc-extra-vars.yml` within the root of the lab-ops-state dir
+To extend the `cloud-config.yml` copy the [infra/cloud-config.yml](infra/cloud-config.yml) into your lab-ops-state root directory and start editing according to your needs. Additional vars should then be placed in the yaml `bucc-extra-vars.yml` within the root of the lab-ops-state dir. You can run [bin/bosh_update_cloud_config.sh](bin/bosh_update_cloud_config.sh) to update your `cloud-config` with the bosh director prior to running any deployment. That script looks in the lab-ops-state first so your copy will take precedence rather than the provided one.
