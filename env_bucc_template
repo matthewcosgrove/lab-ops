@@ -8,7 +8,7 @@ export VCENTER_FOLDER_NAME_RELATIVE_PATH="" # e.g. my-parent-folder/folder/
 
 # BUCC CREATE-ENV BOSH CONFIG
 export BUCC_BOSH_VCENTER_DNS="" # e.g. [ 8.8.4.4, 8.8.8.8 ]
-export BUCC_BOSH_VCENTER_DATASTORE_PATTERN="${GOVC_DATASTORE}" # If using more than one datastore use an appropriate pattern e.g. "[a-zA-Z]*-ds$". See bosh-deployment/vsphere/cpi.yml datastore_pattern and persistent_datastore_pattern fields
+export BUCC_BOSH_VCENTER_DATASTORE_PATTERN="${GOVC_DATASTORE}" # If using more than one datastore use an appropriate pattern e.g. "[a-zA-Z]*-ds$". See https://bosh.io/docs/vsphere-cpi/#global and bosh-deployment/vsphere/cpi.yml datastore_pattern and persistent_datastore_pattern fields
 # BUCC VM NETWORK INFO
 export BUCC_VM_IP=""
 export BUCC_VM_GATEWAY=""
