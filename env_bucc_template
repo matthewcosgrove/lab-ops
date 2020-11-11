@@ -8,14 +8,14 @@ export VCENTER_FOLDER_NAME_RELATIVE_PATH="" # e.g. my-parent-folder/folder/
 
 # BUCC CREATE-ENV BOSH CONFIG
 export BUCC_BOSH_VCENTER_DNS="" # e.g. [ 8.8.4.4, 8.8.8.8 ]
-export BUCC_BOSH_VCENTER_DATASTORE_PATTERN="" # e.g. "[a-zA-Z]*-ds$". See bosh-deployment/vsphere/cpi.yml datastore_pattern and persistent_datastore_pattern fields
+export BUCC_BOSH_VCENTER_DATASTORE_PATTERN="${GOVC_DATASTORE}" # If using more than one datastore use an appropriate pattern e.g. "[a-zA-Z]*-ds$". See bosh-deployment/vsphere/cpi.yml datastore_pattern and persistent_datastore_pattern fields
 # BUCC VM NETWORK INFO
 export BUCC_VM_IP=""
 export BUCC_VM_GATEWAY=""
 export BUCC_VM_CIDR=""
 # BUCC CLOUD CONFIG FOR BOSH DIRECTOR
 export BUCC_BOSH_RESERVED_IP_RANGES_YAML_ARRAY="" # Expected to be in the format "[ 10.0.0.1 - 10.0.0.3, 10.0.0.15 - 10.0.0.49, 10.0.0.50 - 10.0.0.250 ]"
-export BUCC_BOSH_VCENTER_DATASTORE_NAMES_YAML_ARRAY="" # Expecting in format [ 'my-ds', 'my-other-ds']. Keeping in this section rather than VCENTER_* as its the format only used in cloud-config.yml. See VCENTER_DATASTORE_PATTERN for the more general bosh format of the same information
+export BUCC_BOSH_VCENTER_DATASTORE_NAMES_YAML_ARRAY="[ '' ]" # Expecting in format [ 'my-ds', 'my-other-ds']. If using a single datastore this will essentially be [ '${GOVC_DATSTORE}' ] ignoring the potential single quotes dance with bash.
 export BUCC_BOSH_STATIC_IP_CONCOURSE_WORKER=""
 export BUCC_BOSH_STATIC_IP_MINIO=""
 
