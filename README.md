@@ -1,10 +1,12 @@
 ## Overview
 
-An opinionated way to roll out [BUCC](https://github.com/starkandwayne/bucc) on vsphere and beef up how it runs.
+An opinionated way to roll out [BUCC](https://github.com/starkandwayne/bucc) on vsphere.
 
-We use BUCC to get a seamlessly integrated BOSH, UAA, Concourse and CredHub. The integration between those component is also thoroughly [tested](https://pipes.starkandwayne.com/teams/bucc/pipelines/bucc) upstream by BUCC so we dont have to worry about versioning and compatibility issues.
+BUCC ensures a seamlessly integrated BOSH, UAA, Concourse and CredHub. The integration between those component is also thoroughly [tested](https://pipes.starkandwayne.com/teams/bucc/pipelines/bucc) upstream by BUCC so we dont have to worry about versioning and compatibility issues.
 
-By default, BUCC runs with all jobs (i.e. processes) co-located on one VM created by the command [create-env](https://bosh.io/docs/init-vsphere/). This project extends BUCC and puts the default Concourse worker VM on its own VM as this is what we are going to put to work the most and we want the ability to scale out, recreate the VM to fix problems etc via the bosh CLI. A similar approach can be applied to the other bosh jobs by following the same pattern if required. e.g. if you are worried about downtime on Concourse Web during BUCC upgrades.
+By default, BUCC runs with all jobs (i.e. processes) co-located on one VM created by the command [create-env](https://bosh.io/docs/init-vsphere/). This project extends BUCC and puts the default Concourse job on its own VM. This makes it easy to recreate the VM in case of problems via the bosh CLI.
+
+A similar approach can be applied to the other bosh jobs by following the same pattern if required. e.g. if you are worried about downtime on Concourse Web during BUCC upgrades.
 
 The project also supports the following integrated components managed by the BUCC bosh director.
 * minio (integrated to provide creds to Concourse pipelines so they can access an S3 bucket out of the box)
