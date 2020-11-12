@@ -4,7 +4,7 @@ An opinionated way to roll out [BUCC](https://github.com/starkandwayne/bucc) on 
 
 BUCC ensures a seamlessly integrated BOSH, UAA, Concourse and CredHub. The integration between those component is also thoroughly [tested](https://pipes.starkandwayne.com/teams/bucc/pipelines/bucc) upstream by BUCC so we dont have to worry about versioning and compatibility issues.
 
-By default, BUCC runs with all jobs (i.e. processes) co-located on one VM created by the command [create-env](https://bosh.io/docs/init-vsphere/). This project extends BUCC and puts the default Concourse job on its own VM. This makes it easy to recreate the VM in case of problems via the bosh CLI.
+By default, BUCC runs with all jobs (i.e. processes) co-located on one VM created by the command [create-env](https://bosh.io/docs/init-vsphere/). This project extends BUCC and puts the default Concourse worker job on its own VM. This makes it easy to recreate the VM in case of problems via the bosh CLI.
 
 A similar approach can be applied to the other bosh jobs by following the same pattern if required. e.g. if you are worried about downtime on Concourse Web during BUCC upgrades.
 
@@ -85,7 +85,7 @@ At the root of that repo there needs to be a file called `env_bucc` which we wil
 
 Either
 
-1) Deploy just lab-ops core functionality (bucc with and external Concourse worker VM)
+1) Deploy just lab-ops core functionality (bucc with an external Concourse worker VM)
 
 ```
 /home/ubuntu/lab-ops/bin/deploy_bucc.sh
@@ -103,14 +103,14 @@ Once the deployment is complete commit and push your state repo!
 
 To interact with BUCC going forwards and have all the CLIs configured to work out the box
 
-1) PREP ENV VARS
+1) Prep Env Vars
 
 ```
 init-govc
 # Nothing else to do here as BUCC env vars are sourced on login to the Tools VM
 ```
 
-2) PREP CLIs for automated logins
+2) Useful Commands
 ```
 govc ls
 bucc test
