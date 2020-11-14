@@ -85,7 +85,7 @@ else
   spruce merge "${TMPDIR}"/deploy-inputs.yml > "${STATE_VARS_FILE}"
 fi
 
-bucc_cmd up --cpi vsphere --debug
+bucc_cmd up --cpi vsphere --debug "$@"
 echo "Deploy completed successfully"
 echo "Running test suite against the BUCC installation..."
 source <("${bucc_env_file_to_source}")
@@ -102,7 +102,7 @@ echo "Will remove internal worker via re-deploy of BUCC if required"
 source_ops_file_name="remove-internal-concourse-worker.yml"
 cp_ops_file_to_state_dir "${source_ops_file_name}"
 
-bucc_cmd up --cpi vsphere --debug # TODO: Optimise. This is idempotent but not efficient.
+bucc_cmd up --cpi vsphere --debug "$@" # TODO: Optimise. This is idempotent but not efficient.
 echo "Deploy completed successfully"
 echo "Running test suite against the BUCC installation..."
 source <("${bucc_env_file_to_source}")
