@@ -15,12 +15,17 @@ source "$SCRIPT_DIR"/bucc_wrapper_helpers.sh
 bucc_env_file_to_source="${SCRIPT_DIR}"/bucc_env
 
 # Idempotent approach which is meant to affect first run through to prevent BUCC generating the vars file https://github.com/starkandwayne/bucc/blob/2af7a2b47a151007b4db089f2349aa58bce8d1fc/bin/bucc#L69
-mkdir -p "$STATE_VARS_DIR"
-touch "$STATE_VARS_FILE"
-cat <<EOF > "$STATE_VARS_DIR/flags"
+if [ ! -f "${STATE_VARS_FILE}" ]; then
+  mkdir -p "$STATE_VARS_DIR"
+  touch "$STATE_VARS_FILE" # Line that prevents BUCC generating vars file
+fi
+state_flags_file="${STATE_VARS_DIR}/flags"
+if [ ! -f "${state_flags_file}" ]; then
+cat <<EOF > "${state_flags_file}"
 dns
 resource-pool
 EOF
+fi
 
 # prepare ops files by copying over the ones based on if config has been provided
 export BUCC_VCENTER_CA_CERT_YAML_FILE="${BBL_STATE_DIR}"/vcenter-ca-cert.yml
