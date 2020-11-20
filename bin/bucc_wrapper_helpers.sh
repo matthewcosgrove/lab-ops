@@ -209,18 +209,48 @@ function bosh_delete_all_deployments(){
 }
 
 function store_bucc_interpolation_result(){
-
   echo "Persisting the actual bosh.yml interpolation as ${STATE_BUCC_CURRENT_YAML}"
   bucc_cmd int | sed '/BEGIN RSA PRIVATE KEY/,/END RSA PRIVATE KEY/{//!d;};' | sed '/BEGIN CERTIFICATE/,/END CERTIFICATE/{//!d;};' > "${STATE_BUCC_CURRENT_YAML}"
 }
 
-function credhub_set_json(){
+function credhub_set(){
+  local credpath_prefix="/concourse/main/"
+  local credname="${1}"
+  local credvalue="${2}"
+  local credtype="${3:-value}"
+  local credpath="${credpath_prefix}${credname}"
+  if ! credhub get -n "${credpath}" > /dev/null 2>&1;then
+    echo "Setting credential for ${credpath}"
+    credhub set -n "${credpath}" -t "${credtype}" -v "${credvalue}"
+  else
+    echo "${credpath} already created, skipping... NOTE: if required to change run command manually \"credhub set -n "${credpath}" -t value\" "
+  fi
+}
+
+function credhub_set_interactively(){
+  local credpath_prefix="/concourse/main/"
+  local credname="${1}"
+  local credpath="${credpath_prefix}${credname}"
+  if ! credhub get -n "${credpath}" > /dev/null 2>&1;then
+    echo "Please enter cred for: ${credpath}"
+    if [[ "${credname}" == *password ]];then
+      credhub set -n "${credpath}" -t password
+    else
+      credhub set -n "${credpath}" -t value
+    fi
+  else
+    echo "${credpath} already created, skipping.."
+  fi
+
+}
+
+function credhub_set_json_even_if_exists(){
   local credpath_prefix="/concourse/main/"
   local credhub_path="${credpath_prefix}""${1}"
   credhub set -t json -n "${credhub_path}" -v "${2}"
 }
 
 function store_bucc_state_director_vars(){
-  credhub_set_json bucc_state_director_vars_file "$(spruce json "${STATE_VARS_FILE}")"
-  credhub_set_json bucc_state_director_vars_store "$(spruce json "${STATE_VARS_STORE}")"
+  credhub_set_json_even_if_exists bucc_state_director_vars_file "$(spruce json "${STATE_VARS_FILE}")"
+  credhub_set_json_even_if_exists bucc_state_director_vars_store "$(spruce json "${STATE_VARS_STORE}")"
 }
