@@ -40,6 +40,7 @@ else
  echo "No vcenter_ca_cert config found so ignoring. If required add it to the file ${BUCC_VCENTER_CA_CERT_YAML_FILE}. See vcenter-ca-cert-template.yml"
 fi
 
+# NOTE: GOVC_NETWORK parsed differently further below
 echo "Merging in env vars into state yaml file"
 cat <<'EOF' > "${TMPDIR}"/deploy-inputs.yml
 vcenter_password: (( grab $GOVC_PASSWORD ))
@@ -50,7 +51,6 @@ alias: (( grab $BOSH_ENV_ALIAS ))
 internal_cidr: (( grab $BUCC_VM_CIDR ))
 internal_gw: (( grab $BUCC_VM_GATEWAY ))
 internal_ip: (( grab $BUCC_VM_IP ))
-network_name: (( grab $GOVC_NETWORK ))
 vcenter_cluster: (( grab $GOVC_CLUSTER ))
 vcenter_dc: (( grab $GOVC_DATACENTER ))
 vcenter_disks: bucc-disks # Recommended not to change, or bosh might not be able to locate the disk on a re-deploy
@@ -89,6 +89,10 @@ if [ -f $BUCC_EXTRA_VARS_YAML_FILE ];then
 else
   spruce merge "${TMPDIR}"/deploy-inputs.yml > "${STATE_VARS_FILE}"
 fi
+
+# There is an issue with spruce, if $GOVC_NETWORK is something like 192_168_l network_name will become 192168l. See https://github.com/geofffranks/spruce/issues/358
+# This is a temporary workaround
+echo "network_name: \"$GOVC_NETWORK\"" >> "${STATE_VARS_FILE}"
 
 bucc_cmd up --cpi vsphere --debug "$@"
 echo "Deploy completed successfully"
