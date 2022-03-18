@@ -78,6 +78,10 @@ reserved_ip_ranges: (( grab $BUCC_BOSH_RESERVED_IP_RANGES_YAML_ARRAY ))
 concourse_external_worker_ip: (( grab $BUCC_BOSH_STATIC_IP_CONCOURSE_WORKER ))
 EOF
 
+# There is an issue with spruce, if $GOVC_NETWORK is something like 192_168_l network_name will become 192168l. See https://github.com/geofffranks/spruce/issues/358
+# This is a temporary workaround
+echo "network_name: \"$GOVC_NETWORK\"" >> "${TMPDIR}"/deploy-inputs.yml
+
 spruce merge "${TMPDIR}"/deploy-inputs.yml | grep -v password
 
 export BUCC_EXTRA_VARS_YAML_FILE="${BBL_STATE_DIR}"/../bucc-extra-vars.yml
@@ -89,10 +93,6 @@ if [ -f $BUCC_EXTRA_VARS_YAML_FILE ];then
 else
   spruce merge "${TMPDIR}"/deploy-inputs.yml > "${STATE_VARS_FILE}"
 fi
-
-# There is an issue with spruce, if $GOVC_NETWORK is something like 192_168_l network_name will become 192168l. See https://github.com/geofffranks/spruce/issues/358
-# This is a temporary workaround
-echo "network_name: \"$GOVC_NETWORK\"" >> "${STATE_VARS_FILE}"
 
 bucc_cmd up --cpi vsphere --debug "$@"
 echo "Deploy completed successfully"
